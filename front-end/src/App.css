@@ -56,13 +56,13 @@ nav a:hover {
   padding-top: 72px;
 }
 
-.article-list-item {
+.manga-list-item {
   text-decoration: none;
   color: black;
   padding: 16px 0 0 0;
 }
 
-.article-list-item p {
+.manga-list-item p {
   padding-bottom: 32px;
   border-bottom: 2px solid black;
 }
