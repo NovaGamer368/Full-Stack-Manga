@@ -61,8 +61,13 @@ nav a:hover {
   color: black;
   padding: 16px 0 0 0;
 }
+.manga-list-item:hover {
+  background-color: lightgrey;
+}
 
-.manga-list-item p {
+.manga-list-item div {
+  display: flex;
+  gap: 2em;
   padding-bottom: 32px;
   border-bottom: 2px solid black;
 }
