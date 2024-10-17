@@ -29,21 +29,31 @@ const MangaPage = () => {
   }
 
   return (
-    <>
-      <h1>MangaPage wth the ID of {mangaId}</h1>
+    <div className="manga-page-container">
+      <h1>{mangaInfo.title}</h1>
+      <h3>Author(s): {mangaInfo.author}</h3>
+
       <div className="upvotes-section">
-        <button onClick={addUpvote}>Upvote</button>
+        <button className="upvote-btn" onClick={addUpvote}>
+          Upvote
+        </button>
         <p>This manga has {mangaInfo.upvotes} upvote(s)</p>
       </div>
+      <img
+        src={mangaInfo.imageUrl}
+        alt={`${mangaInfo.title} manga cover`}
+        className="manga"
+      />
+
       {mangaInfo?.description.map((paragraph, index) => (
         <p key={index}>{paragraph}</p>
       ))}
+      <CommentsList comments={mangaInfo.comments} />
       <AddCommentForm
         mangaId={mangaId}
         onMangaUpdated={(updatedManga) => setMangaInfo(updatedManga)}
       />
-      <CommentsList comments={mangaInfo.comments} />
-    </>
+    </div>
   );
 };
 

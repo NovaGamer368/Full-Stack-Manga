@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import mangas from "../components/manga-content";
 import MangasList from "../components/MangasList";
 import axios from "axios";
 

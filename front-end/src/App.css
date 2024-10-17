@@ -56,21 +56,32 @@ nav a:hover {
   padding-top: 72px;
 }
 
+.manga-page-container
+{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  align-items: center;
+}
+
 .manga-list-item {
   text-decoration: none;
   color: black;
   padding: 16px 0 0 0;
 }
-.manga-list-item:hover {
+.manga-list-item div:hover {
   background-color: lightgrey;
 }
 
 .manga-list-item div {
   display: flex;
+  align-items: center;
   margin-top: 20px;
   gap: 2em;
   padding-bottom: 20px;
   border-bottom: 2px solid black;
+
 }
 
 #add-comment-form {
@@ -83,7 +94,7 @@ nav a:hover {
 }
 
 input, textarea {
-  display: block;
+  display: flex;
   width: 300px;
   padding: 8px;
   border-radius: 8px;
@@ -107,10 +118,29 @@ input, textarea {
   display: inline-block;
   margin-right: 16px;
 }
+.upvote-btn
+{
+  margin: 20px;
+}
+.manga 
+{
+  width: "100%";
+  height: "auto";
+  min-width: "10em";
+  max-width: "20em";
+  min-height: "15em";
+  max-height: "30em";
+}
 
 .comment {
   border-bottom: 2px solid black;
+  width: 100%;
   padding: 16px;
+}
+.comment-title
+{
+  display: flex;
+  justify-content: space-between;
 }
 
 .nav-right {

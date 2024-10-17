@@ -6,15 +6,17 @@ const AddCommentForm = ({ mangaId, onMangaUpdated }) => {
   const [commentText, setCommentText] = useState("");
 
   const AddComment = async () => {
-    const response = await axios.post(`/api/mangas/${mangaId}/comments`, {
-      postedBy: name,
-      text: commentText,
-    });
+    if (name !== "" && commentText !== "") {
+      const response = await axios.post(`/api/mangas/${mangaId}/comments`, {
+        postedBy: name,
+        text: commentText,
+      });
 
-    const updatedManga = response.data;
-    onMangaUpdated(updatedManga);
-    setName("");
-    setCommentText("");
+      const updatedManga = response.data;
+      onMangaUpdated(updatedManga);
+      setName("");
+      setCommentText("");
+    }
   };
 
   return (
@@ -26,6 +28,7 @@ const AddCommentForm = ({ mangaId, onMangaUpdated }) => {
           value={name}
           onChange={(e) => setName(e.target.value)}
           type="text"
+          required
         />
       </label>
       <label>
@@ -35,6 +38,7 @@ const AddCommentForm = ({ mangaId, onMangaUpdated }) => {
           onChange={(e) => setCommentText(e.target.value)}
           rows={4}
           cols={50}
+          required
         />
       </label>
       <button onClick={AddComment}>Add Comment</button>

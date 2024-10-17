@@ -1,4 +1,5 @@
 import React from "react";
+import dayjs from "dayjs";
 
 const CommentsList = ({ comments }) => {
   return (
@@ -6,7 +7,10 @@ const CommentsList = ({ comments }) => {
       <h3>Comments:</h3>
       {comments.map((comment) => (
         <div className="comment" key={comment.postedBy + ": " + comment.text}>
-          <h4>{comment.postedBy}</h4>
+          <div className="comment-title">
+            <h4>{comment.postedBy}</h4>
+            <p>{dayjs(comment.postedAt).format("M/DD/YYYY h:mmA")}</p>
+          </div>
           <p>{comment.text}</p>
         </div>
       ))}
