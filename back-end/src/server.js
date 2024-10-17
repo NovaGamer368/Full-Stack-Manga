@@ -12,11 +12,10 @@ app.get("/api/test", (req, res) => {
 });
 
 // Sample GET endpoint to fetch a manga by title
-app.get("/api/mangas/:title", async (req, res) => {
-  console.log("route hit");
-  const { title } = req.params;
+app.get("/api/mangas/:mangaId", async (req, res) => {
+  const { mangaId } = req.params;
   try {
-    const manga = await Manga.findOne({ title });
+    const manga = await Manga.findById(mangaId);
     if (!manga) {
       return res.status(404).json({ message: "Manga not found" });
     }
@@ -30,6 +29,7 @@ app.get("/api/mangas/:title", async (req, res) => {
 // PUT endpoint for upvoting a manga
 app.put("/api/mangas/:mangaId/upvote", async (req, res) => {
   const { mangaId } = req.params;
+  console.log("Upvoting:", mangaId);
   try {
     const manga = await Manga.findById(mangaId);
     if (!manga) {

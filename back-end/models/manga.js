@@ -10,6 +10,7 @@ const mangaSchema = new Schema({
   title: { type: String, required: true },
   author: { type: String },
   imageUrl: { type: String },
+  description: { type: [String], required: true },
   upvotes: { type: Number, default: 0 },
   comments: [commentSchema],
 });
