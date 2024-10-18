@@ -57,7 +57,7 @@ const MangaPage = () => {
             {canUpvote ? "Upvote" : "Already Upvoted"}
           </button>
         ) : (
-          <button> Login to Upvote</button>
+          <button className="upvote-btn"> Login to Upvote</button>
         )}
         <p>This manga has {mangaInfo.upvotes} upvote(s)</p>
       </div>
@@ -78,7 +78,7 @@ const MangaPage = () => {
           onMangaUpdated={(updatedManga) => setMangaInfo(updatedManga)}
         />
       ) : (
-        <button>Login to Comment</button>
+        <button className="comment-check">Login to Comment</button>
       )}
     </div>
   );

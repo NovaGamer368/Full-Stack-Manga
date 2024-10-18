@@ -12,24 +12,24 @@ const MangasList = ({ mangas }) => {
               className="manga-list-item"
               to={`/mangas/${manga._id}`}
             >
-              <div>
-                <section>
+              <section>
+                <div>
                   <img
                     src={manga.imageUrl}
                     alt={manga.title + " manga cover"}
                     height={225}
                   />
-                  Upvotes: {manga.upvotes}
-                </section>
+                  <div>Upvotes: {manga.upvotes}</div>
+                </div>
 
-                <section>
+                <div>
                   <span>
                     <h3>{manga.title}</h3>
                   </span>
                   <h5>Author(s): {manga.author}</h5>
                   <p>{manga.description[0].substring(0, 150)}...</p>
-                </section>
-              </div>
+                </div>
+              </section>
             </Link>
           ))}
         </>
