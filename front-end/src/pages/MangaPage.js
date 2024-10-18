@@ -10,19 +10,34 @@ const MangaPage = () => {
   const [mangaInfo, setMangaInfo] = useState({ upvotes: 0, comments: [] });
   const { mangaId } = useParams();
 
+  const { canUpvote } = mangaInfo;
+
   const { user, isLoading } = useUser();
 
   useEffect(() => {
     const loadMangaInfo = async () => {
-      const response = await axios.get(`/api/mangas/${mangaId}`);
+      const token = user && (await user.getIdToken());
+      const headers = token ? { authtoken: token } : {};
+
+      const response = await axios.get(`/api/mangas/${mangaId}`, {
+        headers: headers,
+      });
       const newMangaInfo = response.data;
       setMangaInfo(newMangaInfo);
     };
-    loadMangaInfo();
-  }, []);
+
+    if (isLoading) {
+      loadMangaInfo();
+    }
+  }, [isLoading, user]);
 
   const addUpvote = async () => {
-    const response = await axios.put(`/api/mangas/${mangaId}/upvote`);
+    const token = user && (await user.getIdToken());
+    const headers = token ? { authtoken: token } : {};
+
+    const response = await axios.put(`/api/mangas/${mangaId}/upvote`, null, {
+      headers: headers,
+    });
     const updatedManga = response.data;
     setMangaInfo(updatedManga);
   };
@@ -39,7 +54,7 @@ const MangaPage = () => {
       <div className="upvotes-section">
         {user ? (
           <button className="upvote-btn" onClick={addUpvote}>
-            Upvote
+            {canUpvote ? "Upvote" : "Already Upvoted"}
           </button>
         ) : (
           <button> Login to Upvote</button>

@@ -1,11 +1,33 @@
 import express from "express";
 import { connectDB } from "./db.js";
 import Manga from "../models/manga.js";
+import fs from "fs";
+import admin from "firebase-admin";
 import mangaList from "../data/mangaList.js";
+
+const credentials = JSON.parse(fs.readFileSync("./credentials.json"));
+
+admin.initializeApp({
+  credential: admin.credential.cert(credentials),
+});
 
 const PORT = 8000;
 const app = express();
 app.use(express.json());
+
+app.use(async (req, res, next) => {
+  const { authtoken } = req.headers;
+  if (authtoken) {
+    try {
+      req.user = await admin.auth().verifyIdToken(authtoken);
+    } catch (e) {
+      return res.sendStatus(400);
+    }
+  }
+  req.user = req.user || {};
+  next();
+});
+
 connectDB().then(async () => {
   //If the database is empty refill it here
   // Prefill data if the collection is empty
@@ -42,12 +64,16 @@ app.get("/api/mangas", async (req, res) => {
 // Sample GET endpoint to fetch a manga by title
 app.get("/api/mangas/:mangaId", async (req, res) => {
   const { mangaId } = req.params;
+  const { uid } = req.user;
+
   console.log("Fetching id:", mangaId);
   try {
     const manga = await Manga.findById(mangaId);
     if (!manga) {
       return res.status(404).json({ message: "Manga not found" });
     }
+    const upvoteIds = manga.upvoteIds || [];
+    manga.canUpvote = uid && !upvoteIds.includes(uid);
     res.json(manga);
   } catch (error) {
     console.error(error);
@@ -55,16 +81,32 @@ app.get("/api/mangas/:mangaId", async (req, res) => {
   }
 });
 
+app.use((req, res, next) => {
+  if (req.user) {
+    next();
+  } else {
+    res.sendStatus(401);
+  }
+});
+
 // PUT endpoint for upvoting a manga
 app.put("/api/mangas/:mangaId/upvote", async (req, res) => {
   const { mangaId } = req.params;
+  const { uid } = req.user;
+
   console.log("Upvoting:", mangaId);
   try {
     const manga = await Manga.findById(mangaId);
     if (!manga) {
       return res.status(404).json({ message: "Manga not found" });
     }
-    manga.upvotes += 1;
+    const upvoteIds = manga.upvoteIds || [];
+    const canUpvote = uid && !upvoteIds.includes(uid);
+    if (canUpvote) {
+      manga.upvotes += 1;
+      manga.upvoteIds.push(uid);
+    }
+
     await manga.save();
     res.json(manga);
   } catch (error) {
@@ -76,8 +118,8 @@ app.put("/api/mangas/:mangaId/upvote", async (req, res) => {
 // POST endpoint to add a comment to a manga
 app.post("/api/mangas/:mangaId/comments", async (req, res) => {
   const { mangaId } = req.params;
-  const { postedBy, text } = req.body;
-
+  const { text } = req.body;
+  const { email } = req.user;
   console.log("Adding comment to:", mangaId);
   try {
     const manga = await Manga.findById(mangaId);
@@ -85,7 +127,8 @@ app.post("/api/mangas/:mangaId/comments", async (req, res) => {
       return res.status(404).json({ message: "Manga not found" });
     }
 
-    const comment = { postedBy, text, postedAt: new Date() };
+    console.log(email);
+    const comment = { postedBy: email, text, postedAt: new Date() };
     manga.comments.push(comment);
     await manga.save();
     res.status(201).json(manga);
