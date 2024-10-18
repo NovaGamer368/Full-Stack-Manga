@@ -4,10 +4,13 @@ import axios from "axios";
 import NotFoundPage from "./NotFoundPage";
 import CommentsList from "../components/CommentsList";
 import AddCommentForm from "../components/AddCommentForm";
+import useUser from "../hooks/useUser";
 
 const MangaPage = () => {
   const [mangaInfo, setMangaInfo] = useState({ upvotes: 0, comments: [] });
   const { mangaId } = useParams();
+
+  const { user, isLoading } = useUser();
 
   useEffect(() => {
     const loadMangaInfo = async () => {
@@ -34,9 +37,13 @@ const MangaPage = () => {
       <h3>Author(s): {mangaInfo.author}</h3>
 
       <div className="upvotes-section">
-        <button className="upvote-btn" onClick={addUpvote}>
-          Upvote
-        </button>
+        {user ? (
+          <button className="upvote-btn" onClick={addUpvote}>
+            Upvote
+          </button>
+        ) : (
+          <button> Login to Upvote</button>
+        )}
         <p>This manga has {mangaInfo.upvotes} upvote(s)</p>
       </div>
       <img
@@ -49,10 +56,15 @@ const MangaPage = () => {
         <p key={index}>{paragraph}</p>
       ))}
       <CommentsList comments={mangaInfo.comments} />
-      <AddCommentForm
-        mangaId={mangaId}
-        onMangaUpdated={(updatedManga) => setMangaInfo(updatedManga)}
-      />
+
+      {user ? (
+        <AddCommentForm
+          mangaId={mangaId}
+          onMangaUpdated={(updatedManga) => setMangaInfo(updatedManga)}
+        />
+      ) : (
+        <button>Login to Comment</button>
+      )}
     </div>
   );
 };
