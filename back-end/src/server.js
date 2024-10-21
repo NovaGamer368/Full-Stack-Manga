@@ -5,15 +5,25 @@ import fs from "fs";
 import admin from "firebase-admin";
 import mangaList from "../data/mangaList.js";
 
+import { fileURLToPath } from "url";
+import path from "path";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 const credentials = JSON.parse(fs.readFileSync("./credentials.json"));
 
 admin.initializeApp({
   credential: admin.credential.cert(credentials),
 });
 
-const PORT = 8000;
 const app = express();
 app.use(express.json());
+app.use(express.static(path.join(__dirname, "../build")));
+
+app.get(/^(?!\/api).+/, (req, res) => {
+  res.sendFile(path.join(__dirname, "../build/index.html"));
+});
 
 app.use(async (req, res, next) => {
   const { authtoken } = req.headers;
@@ -138,6 +148,7 @@ app.post("/api/mangas/:mangaId/comments", async (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
+const PORT = process.env.PORT || 8000;
+app.listen(PORT, "0.0.0.0", () => {
   console.log(`Server is listening on port ${PORT}`);
 });
