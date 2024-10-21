@@ -1,0 +1,2 @@
+env_variables:
+  MONGO_DB_CONNECTION_STRING: mongodb+srv://dev:PY2dekImYna2dCSf@cluster0.vqku4.mongodb.net/

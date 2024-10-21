@@ -1,20 +1,27 @@
 import axios from "axios";
 import React, { useState } from "react";
+import useUser from "../hooks/useUser";
 
 const AddCommentForm = ({ mangaId, onMangaUpdated }) => {
-  const [name, setName] = useState("");
   const [commentText, setCommentText] = useState("");
 
+  const { user } = useUser();
+
   const AddComment = async () => {
-    if (name !== "" && commentText !== "") {
-      const response = await axios.post(`/api/mangas/${mangaId}/comments`, {
-        postedBy: name,
-        text: commentText,
-      });
+    if (commentText !== "") {
+      const token = user && (await user.getIdToken());
+      const headers = token ? { authtoken: token } : {};
+
+      const response = await axios.post(
+        `/api/mangas/${mangaId}/comments`,
+        {
+          text: commentText,
+        },
+        { headers: headers }
+      );
 
       const updatedManga = response.data;
       onMangaUpdated(updatedManga);
-      setName("");
       setCommentText("");
     }
   };
@@ -22,25 +29,14 @@ const AddCommentForm = ({ mangaId, onMangaUpdated }) => {
   return (
     <div id="add-comment-form">
       <h3>Add a Comment</h3>
-      <label>
-        Name:
-        <input
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          type="text"
-          required
-        />
-      </label>
-      <label>
-        Comment:
-        <textarea
-          value={commentText}
-          onChange={(e) => setCommentText(e.target.value)}
-          rows={4}
-          cols={50}
-          required
-        />
-      </label>
+      {user && <p>You are posting as {user.email}</p>}
+      <textarea
+        value={commentText}
+        onChange={(e) => setCommentText(e.target.value)}
+        rows={4}
+        cols={50}
+        required
+      />
       <button onClick={AddComment}>Add Comment</button>
     </div>
   );
